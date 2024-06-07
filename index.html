@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini</title>
+    <link rel="icon" type="image/x-icon" href="gemini_favicon.png" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="left_container">
+        <div class="menu">
+            <span class="material-symbols-outlined">
+                menu
+                </span>
+        </div>
+        <div class="add-icon" id="add-icon">
+            <span class="material-symbols-outlined">
+                add
+                </span>
+                <span class="left-text" id="new-chat">New Chat</span>
+        </div>
+        <div class="help-icon">
+            <span class="material-symbols-outlined">
+                help
+                </span>
+                <span class="left-text">Help</span>
+        </div>
+        <div class="activity-icon">
+            <span class="material-symbols-outlined">
+                history
+                </span>
+                <span class="left-text">Activity</span>
+        </div>
+        <div class="setting-icon">
+            <span class="material-symbols-outlined">
+                settings
+                </span>
+                <span class="left-text">Settings</span>
+        </div>
+    </div>
+    <div class="right_container" id="right">
+        <!-- header-part  -->
+        <header class="header-container">
+            <div class="geminiHead">
+                <select name="" id="gemini">
+                    <option value="Gemini" id="1">
+                        <div class="gemini-part1">
+                            <!-- <img src="gemini_favicon.png" alt=""> -->
+                            <span>Gemini</span>
+                        </div>
+                    </option>
+                    <option value="" id="option-2">
+                        <div class="gemini-part2">
+                            <!-- <span><img src="gemini_favicon.png" alt=""></span> -->
+                            <span>Gemini Advance</span>
+                        </div>
+                    </option>
+                </select>
+            </div>
+            <div class="right-header">
+                <div class="google-app">
+                    <span class="material-symbols-outlined">
+                        apps
+                        </span>
+                </div>
+                <div class="profile-img">
+                    <img src="profile.jpeg" alt="" id="profile">
+                </div>
+            </div>
+        </header>
+           <!-- center-div  -->
+          <div id="display-container">
+            <div class="h1-sec">
+                <h1 class="first-h1">Hello, Ratnakar</h1>
+                <h1 class="second-h1">How can I help you today?</h1>
+            </div>
+            <div class="div-container">
+                <div class="div-content">
+                    Help me find the latest trends!!!
+                    <span class="material-symbols-outlined">
+                        pageview
+                        </span>
+                </div>
+                <div class="div-content">
+                    What are some tips to improve public speaking skills for beginners?
+                    <span class="material-symbols-outlined">
+                        lightbulb
+                        </span>
+                </div>
+                <div class="div-content">
+                    Flights to Tokyo and Seoul, and things to do
+                    <span class="material-symbols-outlined">
+                        flight
+                        </span>
+                </div>
+                <div class="div-content">
+                    Brainstorm a tagline for my online store
+                    <span class="material-symbols-outlined">
+                        draw
+                        </span>
+                </div>
+            </div>
+            <!-- <div class="chat-box" id="chat-box"></div> -->
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <!-- footer-part  -->
+        <footer class="footer-container">
+            <div class="input-box">
+                <input type="text" name="" class="searchBox" id="text" placeholder="Enter a prrompt here  !!!">
+                    <button class="btn">
+                        <span class="material-symbols-outlined">
+                        send
+                        </span></button>
+                </div>
+           <div class="para"><p>Gemini may display inaccurate info, including about people, so double-check its responses. <u>Your privacy & Gemini Apps</u></p></div>
+        </footer>
+    </div>
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+      </script>
+
+
+      <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+        let API_KEY = "AIzaSyDl5no-vXM0k4R0yXpzIqMFMZOo8GLbQS8";
+
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        let btn = document.querySelector(".btn");
+    let msgContainer = document.getElementById("display-container");
+    let chatBox = document.getElementById("chat-box");
+
+        async function runCode(){
+            msgContainer.style.display="none";
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+            let userInput = document.querySelector(".searchBox").value;
+            console.log(userInput);
+            const prompt = userInput;
+
+            addMessage(prompt, "user-message", "User", "profile.jpeg");
+
+        try {
+          const result = await model.generateContent(prompt);
+          const response = result.response;
+          let text = await response.text();
+          let x=marked.parse(text);
+          console.log(x);
+
+      
+
+          addMessage(
+            x,
+            "ai-message",
+            "Gemini",
+            "gemini_favicon.png"
+          );
+          document.getElementById("text").value = "";
+        } catch (error) {
+          console.error("Error generating content:", error);
+          addMessage(
+            "Error generating content. Please try again.",
+            "ai-message",
+            "Gemini",
+            "gemini_favicon.png"
+          );
+        }
+      }
+
+        function addMessage(text, className, sender, imgSrc) {
+        const chatBox = document.getElementById("chat-box");
+        const message = document.createElement("div");
+        message.className = "message " + className;
+
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        img.alt = sender;
+        img.className = "chat-img";
+
+        const textNode = document.createElement("span");
+        textNode.innerHTML = text;
+
+        message.appendChild(img);
+        message.appendChild(textNode);
+        chatBox.appendChild(message);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+        btn.addEventListener("click", runCode);
+         document
+        .getElementById("text")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            runCode();
+          }
+        });
+        document
+        .getElementById("add-icon")
+        .addEventListener("click", function(event){
+            event.preventDefault();
+            chatBox.style.display="none";
+            msgContainer.style.display="block";
+            msgContainer.style.textAlign="center"
+            msgContainer.style.paddingBottom="9rem";
+        })
+        </script>
+</body>
+</html>
